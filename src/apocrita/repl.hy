@@ -20,29 +20,15 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(import [apocrita.types [Symbol Expression Closure PrimitiveOperation
-                         number? symbol? expression? primitive?]])
+(import [apocrita.evaluator [eval-]]
+        [apocrita.reader [read-]])
 
-(defn lookup [expr env]
-  (get env expr.expr))
+(defn interactive []
+  "interactive shell"
+  (print "'It is by will alone I set my mind in motion'")
+  (print "Apocrita v. 0.1")
+  (while true
+    (print (eval- (read- (input "=> ")) {}))))
 
-(defn apply-primop [proc args]
-  "apply a primitive operation"
-  (cond [(= proc.expr "+") (reduce + args)]
-        [(= proc.expr "-") (reduce - args)]))
-
-(defn apply- [proc args]
-  "apply procedure to arguments"
-  (cond [(primitive? proc) (apply-primop proc args)]))
-
-(defn evlist [exprs env]
-  "evaluate list of parameters in environment"
-  (map (fn [it] (eval- it env)) exprs))
-
-(defn eval- [expr env]
-  "evaluate an expression in environment"
-  (cond [(number? expr) expr]
-        [(symbol? expr) (lookup expr env)]
-        [(primitive? expr) expr]
-        [true (apply- (eval- (first expr) env)
-                      (evlist (rest expr) env))]))
+(defmain [args]
+  (interactive))

@@ -20,8 +20,9 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(import [apocrita.evaluator [eval- apply- Symbol Expression Closure
-                             primitive? PrimitiveOperation]])
+(import [apocrita.evaluator [eval- apply-]]
+        [apocrita.types [Symbol Expression Closure PrimitiveOperation
+                         primitive?]])
 
 (defn test-evaluate-integer []
   "evaluating integer will return same integer"
