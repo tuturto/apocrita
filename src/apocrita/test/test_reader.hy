@@ -47,6 +47,12 @@
                  (eval- {}))
              27)))
 
+(defn test-read-eval-with-environment []
+  "read-eval (+ x y) produces correct answer"
+  (assert (= (-> (read- "(+ x y)")
+                 (eval- {"x" 5 "y" 6}))
+             11)))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")
