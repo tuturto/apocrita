@@ -22,14 +22,14 @@
 
 (require hy.contrib.anaphoric)
 
-(import [apocrita.types [Symbol Expression PrimitiveOperation]])
+(import [apocrita.types [Symbol Expression PrimitiveOperation Boolean]])
 
 (defn read- [stream]
   "read stream of characters and produce structure for eval to evaluate"
   (tokenize (group-elements stream)))
 
 (defn tokenize [stream]
-  "take stream of strings and create respective expressions and symbols"
+  "take stream of strings and create respective expressions and symbols"  
   (defn try-casting [expr]
     "try casting expression to a number or primitive operation"
     (setv res expr)
@@ -41,6 +41,11 @@
         (catch [e ValueError] 
           (cond [(= "+" expr) (setv res (PrimitiveOperation "+"))]
                 [(= "-" expr) (setv res (PrimitiveOperation "-"))]
+                [(= "<" expr) (setv res (PrimitiveOperation "<"))]
+                [(= ">" expr) (setv res (PrimitiveOperation ">"))]
+                [(= "=" expr) (setv res (PrimitiveOperation "="))]
+                [(= "#t" expr) (setv res (Boolean true))]
+                [(= "#f" expr) (setv res (Boolean false))]
                 [true (setv res (Symbol expr))])))))
     res)
 

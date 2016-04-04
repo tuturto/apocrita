@@ -28,7 +28,10 @@
   (print "'It is by will alone I set my mind in motion'")
   (print "Apocrita v. 0.1")
   (while true
-    (print (eval- (read- (input "=> ")) {}))))
+    (-> (input "=> ")
+        (read-)
+        (eval- {})
+        (print))))
 
 (defmain [args]
   (interactive))

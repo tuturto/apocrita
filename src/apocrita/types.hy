@@ -30,6 +30,18 @@
    [--repr-- (fn [self]
                (str (. self expr)))]])
 
+(defclass Boolean []
+  "Boolean value"  
+  [[--init-- (fn [self value]
+               (setv self.value value)
+               nil)]
+   [--str-- (fn [self]
+             (if (. self value)
+               "#t"
+               "#f"))]
+   [--repr-- (fn [self]
+               (str (. self value)))]])
+
 (defclass Expression []
   "expression"
   [[--init-- (fn [self &optional [expr nil]]
@@ -76,3 +88,7 @@
 (defn primitive? [expr]
   "is this a primitive"
   (is (type expr) PrimitiveOperation))
+
+(defn boolean? [expr]
+  "is this boolean"
+  (is (type expr) Boolean))

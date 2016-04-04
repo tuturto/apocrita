@@ -20,34 +20,34 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(import [apocrita.types [Symbol Expression Closure PrimitiveOperation
-                         number? symbol? expression? primitive? boolean?]]
-        [apocrita.core [op-add op-subtract op-smaller op-greater op-equal]])
+(import [apocrita.core [op-add op-subtract op-smaller op-greater]])
 
-(defn lookup [expr env]
-  (get env expr.expr))
+(defn test-add []
+  "adding numbers produce their sum"
+  (assert (= (op-add [1 2 3])
+             6)))
 
-(defn apply-primop [proc args]
-  "apply a primitive operation"
-  (cond [(= proc.expr "+") (op-add args)]
-        [(= proc.expr "-") (op-subtract args)]
-        [(= proc.expr "<") (op-smaller args)]
-        [(= proc.expr ">") (op-greater args)]
-        [(= proc.expr "=") (op-equal args)]))
+(defn test-subtract []
+  "subtracting numbers work"
+  (assert (= (op-subtract [5 1 2])
+             2)))
 
-(defn apply- [proc args]
-  "apply procedure to arguments"
-  (cond [(primitive? proc) (apply-primop proc args)]))
+(defn test-smaller-true []
+  "testing (< 1 2 3) results true"
+  (let [[res (op-smaller [1 2 3])]]
+    (assert (= res.value true))))
 
-(defn evlist [exprs env]
-  "evaluate list of parameters in environment"
-  (list (map (fn [it] (eval- it env)) exprs)))
+(defn test-smaller-false []
+  "testing (< 3 2 1) results false"
+  (let [[res (op-smaller [3 2 1])]]
+    (assert (= res.value false))))
 
-(defn eval- [expr env]
-  "evaluate an expression in environment"
-  (cond [(number? expr) expr]
-        [(boolean? expr) expr]
-        [(symbol? expr) (lookup expr env)]
-        [(primitive? expr) expr]
-        [true (apply- (eval- (first expr) env)
-                      (evlist (rest expr) env))]))
+(defn test-greater-true []
+  "testing (> 3 2 1) results true"
+  (let [[res (op-greater [3 2 1])]]
+    (assert (= res.value true))))
+
+(defn test-greater-false []
+  "testing (> 1 2 3) results false"
+  (let [[res (op-greater [1 2 3])]]
+    (assert (= res.value false))))

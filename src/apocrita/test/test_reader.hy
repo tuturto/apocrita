@@ -53,6 +53,18 @@
                  (eval- {"x" 5 "y" 6}))
              11)))
 
+(defn test-smaller-than-true []
+  "smaller than returns #t when succesfull"
+  (assert (= (str (-> (read- "(< 1 2 3)")
+                   (eval- {})))
+             "#t")))
+
+(defn test-smaller-than-false []
+  "smaller than returns #f when failing"
+  (assert (= (str (-> (read- "(< 3 2 1)")
+                   (eval- {})))
+             "#f")))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")

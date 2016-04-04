@@ -22,5 +22,6 @@
 
 import hy
 
+from apocrita.test.test_core import *
 from apocrita.test.test_evaluator import *
 from apocrita.test.test_reader import *

@@ -20,34 +20,45 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(import [apocrita.types [Symbol Expression Closure PrimitiveOperation
-                         number? symbol? expression? primitive? boolean?]]
-        [apocrita.core [op-add op-subtract op-smaller op-greater op-equal]])
+(import [apocrita.types [Boolean]])
 
-(defn lookup [expr env]
-  (get env expr.expr))
+(defn op-add [coll]
+  "add operands together"
+  (reduce + coll))
 
-(defn apply-primop [proc args]
-  "apply a primitive operation"
-  (cond [(= proc.expr "+") (op-add args)]
-        [(= proc.expr "-") (op-subtract args)]
-        [(= proc.expr "<") (op-smaller args)]
-        [(= proc.expr ">") (op-greater args)]
-        [(= proc.expr "=") (op-equal args)]))
+(defn op-subtract [coll]
+  "subtract operands"
+  (reduce - coll))
 
-(defn apply- [proc args]
-  "apply procedure to arguments"
-  (cond [(primitive? proc) (apply-primop proc args)]))
+(defn op-smaller [coll]
+  "test if every operand is smaller than the one before it"
+  (setv res true)
+  (setv previous (first coll))
+  (for [current (rest coll)]
+    (when (not (< previous current))
+        (setv res false)
+        (break))
+    (setv previous current))
+  (Boolean res))
 
-(defn evlist [exprs env]
-  "evaluate list of parameters in environment"
-  (list (map (fn [it] (eval- it env)) exprs)))
+(defn op-greater [coll]
+  "test is every operand is larger that the one before it"
+  (setv res true)
+  (setv previous (first coll))
+  (for [current (rest coll)]
+    (when (not (> previous current))
+        (setv res false)
+        (break))
+    (setv previous current))
+  (Boolean res))
 
-(defn eval- [expr env]
-  "evaluate an expression in environment"
-  (cond [(number? expr) expr]
-        [(boolean? expr) expr]
-        [(symbol? expr) (lookup expr env)]
-        [(primitive? expr) expr]
-        [true (apply- (eval- (first expr) env)
-                      (evlist (rest expr) env))]))
+(defn op-equal [coll]
+  "test is every operand is equal to the one before it"
+  (setv res true)
+  (setv previous (first coll))
+  (for [current (rest coll)]
+    (when (not (= previous current))
+        (setv res false)
+        (break))
+    (setv previous current))
+  (Boolean res))
