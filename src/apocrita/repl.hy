@@ -23,14 +23,22 @@
 (import [apocrita.evaluator [eval-]]
         [apocrita.reader [read-]])
 
-(defn interactive []
+(defn input-expression []
+  "get complete expression"
+  (setv res (input "=> "))
+  (while (not (<= (.count res "(")
+                  (.count res ")")))
+    (setv res (+ res " " (input "... "))))
+  res)
+
+(defmain [args]
   "interactive shell"
   (print "'It is by will alone I set my mind in motion'")
   (print "Apocrita v. 0.1")
   (setv running true)
   (while running
     (try 
-     (-> (input "=> ")
+     (-> (input-expression)
          (read-)
          (eval- {})
          (print))
@@ -39,5 +47,4 @@
      (except [e Exception]
        (print "error:" e)))))
 
-(defmain [args]
-  (interactive))
+
