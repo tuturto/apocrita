@@ -22,7 +22,8 @@
 
 (import [apocrita.types [Symbol Expression Closure PrimitiveOperation
                          number? symbol? expression? primitive? boolean?]]
-        [apocrita.core [op-add op-subtract op-smaller op-greater op-equal]])
+        [apocrita.core [op-add op-subtract op-smaller op-greater op-equal
+                        op-exit]])
 
 (defn lookup [expr env]
   (get env expr.expr))
@@ -33,7 +34,8 @@
         [(= proc.expr "-") (op-subtract args)]
         [(= proc.expr "<") (op-smaller args)]
         [(= proc.expr ">") (op-greater args)]
-        [(= proc.expr "=") (op-equal args)]))
+        [(= proc.expr "=") (op-equal args)]
+        [(= proc.expr "exit") (op-exit (first args))])) ;; TODO: rest?
 
 (defn apply- [proc args]
   "apply procedure to arguments"

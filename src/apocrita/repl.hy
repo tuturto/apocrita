@@ -27,11 +27,17 @@
   "interactive shell"
   (print "'It is by will alone I set my mind in motion'")
   (print "Apocrita v. 0.1")
-  (while true
-    (-> (input "=> ")
-        (read-)
-        (eval- {})
-        (print))))
+  (setv running true)
+  (while running
+    (try 
+     (-> (input "=> ")
+         (read-)
+         (eval- {})
+         (print))
+     (except [e SystemExit]
+       (setv running false))
+     (except [e Exception]
+       (print "error:" e)))))
 
 (defmain [args]
   (interactive))

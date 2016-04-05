@@ -20,7 +20,8 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(import [apocrita.types [Boolean]])
+(import [sys [exit]]
+        [apocrita.types [Boolean]])
 
 (defn op-add [coll]
   "add operands together"
@@ -62,3 +63,7 @@
         (break))
     (setv previous current))
   (Boolean res))
+
+(defn op-exit [code]
+  "raises SystemExit exception in order to terminate the program"
+  (exit code))

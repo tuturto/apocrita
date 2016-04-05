@@ -46,6 +46,7 @@
                 [(= "=" expr) (setv res (PrimitiveOperation "="))]
                 [(= "#t" expr) (setv res (Boolean true))]
                 [(= "#f" expr) (setv res (Boolean false))]
+                [(= "exit" expr) (setv res (PrimitiveOperation "exit"))]
                 [true (setv res (Symbol expr))])))))
     res)
 
