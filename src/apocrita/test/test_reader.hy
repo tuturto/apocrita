@@ -65,6 +65,24 @@
                    (eval- {})))
              "#f")))
 
+(defn test-cond []
+  "cond returns value of true branch"
+  (assert (= (-> (read- "(cond ((> a b) a)
+                               ((> b a) b)
+                               ((= a b) a))")
+                 (eval- {"a" 6
+                         "b" 7}))
+             7)))
+
+(defn test-cond-eval []
+  "cond returns value of true branch after evaluating it correctly"
+  (assert (= (-> (read- "(cond ((< a b) (+ a 10))
+                               ((< b a) (+ b 10))
+                               ((= a b) a))")
+                 (eval- {"a" 6
+                         "b" 7}))
+             16)))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")

@@ -45,11 +45,31 @@
   "evaluate list of parameters in environment"
   (list (map (fn [it] (eval- it env)) exprs)))
 
+(defn cond? [expr]
+  "is this expression a cond?"
+  (and (expression? expr)
+       (symbol? (first expr))
+       (= (. (first expr) expr) "cond")))
+
+(defn eval-cond [expr env]
+  "evaluate a cond form"
+  (setv match-found false)
+  (setv res nil)
+  (for [branch (rest expr)]
+    (when (= (str (eval- (first branch) env)) "#t")
+      (setv match-found true)
+      (setv res (eval- (second branch) env))
+      (break)))
+  (when (not match-found)
+    (assert false))
+  res)
+
 (defn eval- [expr env]
   "evaluate an expression in environment"
   (cond [(number? expr) expr]
         [(boolean? expr) expr]
+        [(cond? expr) (eval-cond expr env)]
         [(symbol? expr) (lookup expr env)]
-        [(primitive? expr) expr]
+        [(primitive? expr) expr]        
         [true (apply- (eval- (first expr) env)
                       (evlist (rest expr) env))]))
