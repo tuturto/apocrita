@@ -79,7 +79,7 @@ Functions are defined with lambda keyword:
 ...    (cond ((= n 0) 1)
 ...          (#t (* n (factorial (- n 1)))))))
 <closure>
-=>(factorial 4)
+=> (factorial 4)
 24
 ```
 
