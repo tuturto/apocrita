@@ -64,11 +64,31 @@
     (assert false))
   res)
 
+(defn define? [expr]
+  "is this expression a define"
+  (and (expression? expr)
+       (symbol? (first expr))
+       (= (. (first expr) expr) "define")))
+
+(defn set-symbol-value [symbol value env]
+  "set value of symbol"
+  (assoc env symbol.expr value))
+
+(defn get-symbol-value [symbol env]
+  "get value of symbol"
+  (get env symbol.expr))
+
+(defn eval-define [expr env]
+  "evaluate define form"
+  (set-symbol-value (get expr.expr 1) (get expr.expr 2) env)
+  (get-symbol-value (get expr.expr 1) env))
+
 (defn eval- [expr env]
   "evaluate an expression in environment"
   (cond [(number? expr) expr]
         [(boolean? expr) expr]
         [(cond? expr) (eval-cond expr env)]
+        [(define? expr) (eval-define expr env)]
         [(symbol? expr) (lookup expr env)]
         [(primitive? expr) expr]        
         [true (apply- (eval- (first expr) env)

@@ -36,11 +36,12 @@
   (print "'It is by will alone I set my mind in motion'")
   (print "Apocrita v. 0.1")
   (setv running true)
+  (setv env {})
   (while running
     (try 
      (-> (input-expression)
          (read-)
-         (eval- {})
+         (eval- env)
          (print))
      (except [e SystemExit]
        (setv running false))

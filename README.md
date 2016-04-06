@@ -58,6 +58,17 @@ Conditional are done with cond form:
 12
 ```
 
+Value of a symbol can be defined and later used in program:
+
+```
+=> (define a 5)
+5
+=> (define b 6)
+6
+=> (> a b)
+#f
+```
+
 When done, just exit the repl:
 
 ```
