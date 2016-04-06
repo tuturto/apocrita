@@ -30,7 +30,7 @@ There are two types of data, numbers and booleans:
 #f
 ```
 
-Numbers can be added and subtracted:
+Basic arithmetic can be performed with numbers:
 
 ```
 => (+ 1 1)
@@ -39,6 +39,8 @@ Numbers can be added and subtracted:
 5
 => (+ 2.5 2.5)
 5.0
+=> (* 2 3)
+6
 ```
 
 Simple comparisons are supported:
@@ -67,6 +69,18 @@ Value of a symbol can be defined and later used in program:
 6
 => (> a b)
 #f
+```
+
+Functions are defined with lambda keyword:
+
+```
+=> (define factorial
+...  (lambda (n)
+...    (cond ((= n 0) 1)
+...          (#t (* n (factorial (- n 1)))))))
+<closure>
+=>(factorial 4)
+24
 ```
 
 When done, just exit the repl:

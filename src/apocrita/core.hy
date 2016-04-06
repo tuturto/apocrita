@@ -23,6 +23,10 @@
 (import [sys [exit]]
         [apocrita.types [Boolean]])
 
+(defn std-env []
+  "create standard environment"
+  (, {}))
+
 (defn op-add [coll]
   "add operands together"
   (reduce + coll))
@@ -30,6 +34,10 @@
 (defn op-subtract [coll]
   "subtract operands"
   (reduce - coll))
+
+(defn op-multiply [coll]
+  "multiply operands"
+  (reduce * coll))
 
 (defn op-smaller [coll]
   "test if every operand is smaller than the one before it"

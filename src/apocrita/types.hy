@@ -53,6 +53,8 @@
              (.append (. self expr) expr))]
    [--str-- (fn [self]
               (str (. self expr)))]
+   [--repr-- (fn [self]
+               (str self.expr))]
    [--iter-- (fn [self]
                (.--iter-- self.expr))]])
 
@@ -62,7 +64,11 @@
                (setv self.params params)
                (setv self.body body)
                (setv self.env env)
-               nil)]])
+               nil)]
+   [--str-- (fn [self]
+              "<closure>")]
+   [--repr-- (fn [self]
+               "<closure>")]])
 
 (defclass PrimitiveOperation []
   "primitive operation"
@@ -92,3 +98,13 @@
 (defn boolean? [expr]
   "is this boolean"
   (is (type expr) Boolean))
+
+(defn true? [expr]
+  "is this symbol #t"
+  (and (is (type expr) Boolean)
+       expr.value))
+
+(defn false? [expr]
+  "is this symbol #f"
+  (and (is (type expr) Boolean)
+       (not expr.value)))

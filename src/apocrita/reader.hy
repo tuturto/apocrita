@@ -39,14 +39,10 @@
        (try
         (setv res (float expr))
         (catch [e ValueError] 
-          (cond [(= "+" expr) (setv res (PrimitiveOperation "+"))]
-                [(= "-" expr) (setv res (PrimitiveOperation "-"))]
-                [(= "<" expr) (setv res (PrimitiveOperation "<"))]
-                [(= ">" expr) (setv res (PrimitiveOperation ">"))]
-                [(= "=" expr) (setv res (PrimitiveOperation "="))]
+          (cond [(in expr ["-" "+" "*" "<" ">" "=" "exit"])
+                 (setv res (PrimitiveOperation expr))]
                 [(= "#t" expr) (setv res (Boolean true))]
                 [(= "#f" expr) (setv res (Boolean false))]
-                [(= "exit" expr) (setv res (PrimitiveOperation "exit"))]
                 [true (setv res (Symbol expr))])))))
     res)
 

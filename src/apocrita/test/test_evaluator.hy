@@ -21,20 +21,21 @@
 ;; THE SOFTWARE.
 
 (import [apocrita.evaluator [eval- apply-]]
+        [apocrita.core [std-env]]
         [apocrita.types [Symbol Expression Closure PrimitiveOperation
                          primitive?]])
 
 (defn test-evaluate-integer []
   "evaluating integer will return same integer"
-  (assert (= (eval- 42 nil)
+  (assert (= (eval- 42 (std-env))
              42)))
 
 (defn test-evaluate-float []
   "evaluating float will return same float"
-  (assert (= (eval- 3.14 nil)
+  (assert (= (eval- 3.14 (std-env))
              3.14)))
 
-(defn test-evaluate-symbol []
+(defn evaluate-symbol []
   "evaluating symbol will return value of that symbol in environment"
   (assert (= (eval- (Symbol "foo") {"foo" 5})
              5)))

@@ -21,7 +21,8 @@
 ;; THE SOFTWARE.
 
 (import [apocrita.evaluator [eval-]]
-        [apocrita.reader [read-]])
+        [apocrita.reader [read-]]
+        [apocrita.core [std-env]])
 
 (defn input-expression []
   "get complete expression"
@@ -36,7 +37,7 @@
   (print "'It is by will alone I set my mind in motion'")
   (print "Apocrita v. 0.1")
   (setv running true)
-  (setv env {})
+  (setv env (std-env))
   (while running
     (try 
      (-> (input-expression)

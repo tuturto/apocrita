@@ -21,67 +21,82 @@
 ;; THE SOFTWARE.
 
 (import [apocrita.reader [read- group-elements]]
-        [apocrita.evaluator [eval-]])
+        [apocrita.evaluator [eval-]]
+        [apocrita.core [std-env]]
+        [apocrita.types [true? false?]])
+
+(defn read-eval [expr env]
+  "reads and evaluates expression"
+  (-> (read- expr)
+      (eval- env)))
 
 (defn test-read-eval-simple []
   "read-eval with simple number returns that number"
-  (assert (= (-> (read- "15")
-                 (eval- {}))
+  (assert (= (read-eval "15" (std-env))
              15)))
 
 (defn test-read-eval-expression []
   "read-eval of simple expression works"
-  (assert (= (-> (read- "(+ 1 2)")
-                 (eval- {}))
+  (assert (= (read-eval "(+ 1 2)" (std-env))
              3)))
 
 (defn test-read-eval-nested []
   "read-eval of nested expressions works"
-  (assert (= (-> (read- "(+ 1 2 (- 4 3))")
-                 (eval- {}))
+  (assert (= (read-eval "(+ 1 2 (- 4 3))" (std-env))
              4)))
 
 (defn test-read-eval-more-nesting []
   "read-eval (+ 3 4 (- 5 4 2) (+ 1 2 3 (+ 4 5 6)))"
-  (assert (= (-> (read- "(+ 3 4 (- 5 4 2) (+ 1 2 3 (+ 4 5 6)))")
-                 (eval- {}))
+  (assert (= (read-eval "(+ 3 4 (- 5 4 2) (+ 1 2 3 (+ 4 5 6)))" (std-env))
              27)))
 
 (defn test-read-eval-with-environment []
   "read-eval (+ x y) produces correct answer"
-  (assert (= (-> (read- "(+ x y)")
-                 (eval- {"x" 5 "y" 6}))
+  (setv env (std-env))
+  (read-eval "(define x 5)" env)
+  (read-eval "(define y 6)" env)
+  (assert (= (read-eval "(+ x y)" env)
              11)))
 
 (defn test-smaller-than-true []
   "smaller than returns #t when succesfull"
-  (assert (= (str (-> (read- "(< 1 2 3)")
-                   (eval- {})))
-             "#t")))
+  (assert (true? (read-eval "(< 1 2 3)" (std-env)))))
 
 (defn test-smaller-than-false []
   "smaller than returns #f when failing"
-  (assert (= (str (-> (read- "(< 3 2 1)")
-                   (eval- {})))
-             "#f")))
+  (assert (false? (read-eval "(< 3 2 1)" (std-env)))))
 
 (defn test-cond []
   "cond returns value of true branch"
-  (assert (= (-> (read- "(cond ((> a b) a)
+  (setv env (std-env))
+  (read-eval "(define a 6)" env)
+  (read-eval "(define b 7)" env)
+  (assert (= (read-eval "(cond ((> a b) a)
                                ((> b a) b)
-                               ((= a b) a))")
-                 (eval- {"a" 6
-                         "b" 7}))
+                               ((= a b) a))"
+                        env)
              7)))
 
 (defn test-cond-eval []
   "cond returns value of true branch after evaluating it correctly"
-  (assert (= (-> (read- "(cond ((< a b) (+ a 10))
+  (setv env (std-env))
+  (read-eval "(define a 6)" env)  
+  (read-eval "(define b 7)" env)
+  (assert (= (read-eval "(cond ((< a b) (+ a 10))
                                ((< b a) (+ b 10))
-                               ((= a b) a))")
-                 (eval- {"a" 6
-                         "b" 7}))
+                               ((= a b) a))" env)
              16)))
+
+(defn test-lambda []
+  (setv env (std-env))
+  (-> (read- "(define factorial
+                (lambda (n)
+                  (cond ((= n 0) 1)
+                        (#t (* n (factorial (- n 1)))))))")
+      (eval- env))
+  (assert (= (-> (read- "(factorial 4)")
+                 (eval- env))
+             24)))
 
 (defn test-group-single-character []
   "even single character should be grouped correctly"
@@ -98,7 +113,7 @@
   (assert (= (group-elements "(+ 10 5)")
              ["(" "+" "10" "5" ")"])))
 
-(defn test-read-nested-expressions []
+(defn test-group-nested-expressions []
   "nested expressions are handled with grace"
   (assert (= (group-elements "(+ 1 2 (+ 3 4))")
              ["(" "+" "1" "2" "(" "+" "3" "4" ")" ")"])))

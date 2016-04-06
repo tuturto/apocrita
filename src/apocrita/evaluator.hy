@@ -23,23 +23,33 @@
 (import [apocrita.types [Symbol Expression Closure PrimitiveOperation
                          number? symbol? expression? primitive? boolean?]]
         [apocrita.core [op-add op-subtract op-smaller op-greater op-equal
-                        op-exit]])
-
-(defn lookup [expr env]
-  (get env expr.expr))
+                        op-exit op-multiply]])
 
 (defn apply-primop [proc args]
   "apply a primitive operation"
   (cond [(= proc.expr "+") (op-add args)]
         [(= proc.expr "-") (op-subtract args)]
+        [(= proc.expr "*") (op-multiply args)]
         [(= proc.expr "<") (op-smaller args)]
         [(= proc.expr ">") (op-greater args)]
         [(= proc.expr "=") (op-equal args)]
-        [(= proc.expr "exit") (op-exit (first args))])) ;; TODO: rest?
+        [(= proc.expr "exit") (op-exit (first args))]))
+
+(defn bind [params args env]
+  "bind arguments to list of formal parameters"
+  (when (> (len params.expr) (len args))
+    (assert false))
+  (when (< (len params.expr) (len args))
+    (assert false))
+  (setv combined (dict-comp (. (first pair) expr) (second pair)
+                            [pair (zip params args)]))  
+  (, combined env))
 
 (defn apply- [proc args]
   "apply procedure to arguments"
-  (cond [(primitive? proc) (apply-primop proc args)]))
+  (cond [(primitive? proc) (apply-primop proc args)]
+        [true (eval- (. proc body)
+                     (bind (. proc params) args (. proc env))) ]))
 
 (defn evlist [exprs env]
   "evaluate list of parameters in environment"
@@ -72,16 +82,43 @@
 
 (defn set-symbol-value [symbol value env]
   "set value of symbol"
-  (assoc env symbol.expr value))
+  (assoc (first env) symbol.expr value))
 
-(defn get-symbol-value [symbol env]
-  "get value of symbol"
-  (get env symbol.expr))
+(defn lookup [symbol env]
+  "get value of symbol in nested environment"
+  (setv found false)
+  (setv res nil)
+  (setv current-env env)
+  (setv current-frame (first current-env)) 
+  (while current-frame
+    (when (in symbol.expr current-frame)
+      (setv found true)
+      (setv res (get current-frame symbol.expr))
+      (break))
+    (setv current-env (second current-env))
+    (if current-env
+      (setv current-frame (first current-env))
+      (setv current-frame nil)))
+  (if found
+    res
+    (assert false)))
 
 (defn eval-define [expr env]
   "evaluate define form"
-  (set-symbol-value (get expr.expr 1) (get expr.expr 2) env)
-  (get-symbol-value (get expr.expr 1) env))
+  (set-symbol-value (get expr.expr 1)
+                    (eval- (get expr.expr 2) env)
+                    env)
+  (lookup (get expr.expr 1) env))
+
+(defn lambda? [expr]
+  "is this expression a lambda"
+  (and (expression? expr)
+       (symbol? (first expr))
+       (in (. (first expr) expr) ["lambda" "λ"])))
+
+(defn eval-lambda [expr env]
+  "evaluate lambda"
+  (Closure (get expr.expr 1) (get expr.expr 2) env))
 
 (defn eval- [expr env]
   "evaluate an expression in environment"
@@ -89,6 +126,7 @@
         [(boolean? expr) expr]
         [(cond? expr) (eval-cond expr env)]
         [(define? expr) (eval-define expr env)]
+        [(lambda? expr) (eval-lambda expr env)]
         [(symbol? expr) (lookup expr env)]
         [(primitive? expr) expr]        
         [true (apply- (eval- (first expr) env)
