@@ -106,10 +106,23 @@
 
 (defn eval-define [expr env]
   "evaluate define form"
-  (set-symbol-value (get expr.expr 1)
-                    (eval- (get expr.expr 2) env)
-                    env)
-  (lookup (get expr.expr 1) env))
+  (cond [(symbol? (second expr))
+         (do (set-symbol-value (get expr.expr 1)
+                               (eval- (get expr.expr 2) env)
+                               env)
+             (lookup (get expr.expr 1) env))]
+        [(expression? (second expr))
+         (let [[header (second expr)]
+               [fn-name (first header)]
+               [param-list (list (rest header))]
+               [body (get expr.expr 2)]]
+           (set-symbol-value fn-name
+                             (eval- (Expression [(Symbol "lambda")
+                                                 (Expression param-list)
+                                                 body])
+                                    env)
+                             env)
+           (lookup fn-name env))]))
 
 (defn lambda? [expr]
   "is this expression a lambda"

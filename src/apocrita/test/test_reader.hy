@@ -98,6 +98,13 @@
                  (eval- env))
              24)))
 
+(defn test-eval-define-lambda []
+  "short form of define lambda"
+  (setv env (std-env))
+  (read-eval "(define (foo a b) (+ a b))" env)
+  (assert (= (read-eval "(foo 1 2)" env)
+             3)))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")

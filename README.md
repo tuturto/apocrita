@@ -60,6 +60,13 @@ Conditional are done with cond form:
 12
 ```
 
+If no branch match in cond, an error is raised:
+
+```
+=> (cond (#f #f))
+no match in cond: (cond (#f #f))
+```
+
 Value of a symbol can be defined and later used in program:
 
 ```
@@ -71,13 +78,20 @@ Value of a symbol can be defined and later used in program:
 #f
 ```
 
-Functions are defined with lambda keyword:
+Functions are defined with lambda keyword or with shortform:
 
 ```
 => (define factorial
 ...  (lambda (n)
 ...    (cond ((= n 0) 1)
 ...          (#t (* n (factorial (- n 1)))))))
+<closure>
+=> (factorial 4)
+24
+
+=> (define (factorial n)
+...  (cond ((= n 0) 1)
+...        (#t (* n (factorial (- n 1))))))
 <closure>
 => (factorial 4)
 24
