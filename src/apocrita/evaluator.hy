@@ -91,7 +91,7 @@
   (setv res nil)
   (setv current-env env)
   (setv current-frame (first current-env)) 
-  (while current-frame
+  (while (not (is current-frame nil))
     (when (in symbol.expr current-frame)
       (setv found true)
       (setv res (get current-frame symbol.expr))
