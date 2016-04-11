@@ -21,7 +21,8 @@
 ;; THE SOFTWARE.
 
 (import [apocrita.types [Symbol Expression Closure PrimitiveOperation
-                         number? symbol? expression? primitive? boolean?]]
+                         number? symbol? expression? primitive? boolean?
+                         UnboundSymbol TooManyParameters NoMatchInCond]]
         [apocrita.core [op-add op-subtract op-smaller op-greater op-equal
                         op-exit op-multiply]])
 
@@ -40,7 +41,7 @@
   (when (> (len params.expr) (len args))
     (assert false))
   (when (< (len params.expr) (len args))
-    (assert false))
+    (raise (TooManyParameters params args)))
   (setv combined (dict-comp (. (first pair) expr) (second pair)
                             [pair (zip params args)]))  
   (, combined env))
@@ -49,7 +50,7 @@
   "apply procedure to arguments"
   (cond [(primitive? proc) (apply-primop proc args)]
         [true (eval- (. proc body)
-                     (bind (. proc params) args (. proc env))) ]))
+                     (bind (. proc params) args (. proc env)))]))
 
 (defn evlist [exprs env]
   "evaluate list of parameters in environment"
@@ -71,7 +72,7 @@
       (setv res (eval- (second branch) env))
       (break)))
   (when (not match-found)
-    (assert false))
+    (raise (NoMatchInCond expr)))
   res)
 
 (defn define? [expr]
@@ -101,7 +102,7 @@
       (setv current-frame nil)))
   (if found
     res
-    (assert false)))
+    (raise (UnboundSymbol symbol.expr))))
 
 (defn eval-define [expr env]
   "evaluate define form"

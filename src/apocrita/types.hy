@@ -52,9 +52,11 @@
    [append (fn [self expr]
              (.append (. self expr) expr))]
    [--str-- (fn [self]
-              (str (. self expr)))]
+              (+ "("
+                 (.join " " (map str (. self expr)))
+                 ")"))]
    [--repr-- (fn [self]
-               (str self.expr))]
+               (str self))]
    [--iter-- (fn [self]
                (.--iter-- self.expr))]])
 
@@ -76,7 +78,57 @@
                (setv self.expr expr)
                nil)]
    [--str-- (fn [self]
-              (str (. self expr)))]])
+              (str (. self expr)))]
+   [--repr-- (fn [self]
+               (str (. self expr)))]])
+
+(defclass ApocritaException [Exception]
+  "base class for all exceptions"
+  [[--init-- (fn [self expr message]
+               (-> (super)
+                   (.--init--))
+               (setv self.message message)
+               (setv self.expr expr)
+               nil)]])
+
+(defclass UnboundSymbol [ApocritaException]
+  "error raised when trying to access value of unbound symbol"
+  [[--init-- (fn [self expr]
+               (-> (super)
+                   (.--init-- expr "unbound symbol")))]
+   [--str-- (fn [self]
+              (.format "{0}: {1}"
+                       self.message
+                       self.expr))]])
+
+(defclass TooManyParameters [ApocritaException]
+  "error raised when too many parameters was specified"
+  [[--init-- (fn [self param-list params]
+               (-> (super)
+                   (.--init-- nil "too many parameters"))
+               (setv self.params params)
+               (setv self.param-list param-list)
+               nil)]
+   [--str-- (fn [self]
+              (.format "{0}: expected {1} '{2}', got {3} '{4}'"
+                       self.message
+                       (len self.param-list.expr)
+                       self.param-list
+                       (len self.params)
+                       (+ "("
+                          (.join " " (map str (. self params)))
+                          ")")))]])
+
+(defclass NoMatchInCond [ApocritaException]
+  "error raised when cond doesn't execute"
+  [[--init-- (fn [self expr]
+               (-> (super)
+                   (.--init-- expr "no match in cond"))
+               nil)]
+   [--str-- (fn [self]
+              (.format "{0}: {1}"
+                       self.message
+                       self.expr))]])
 
 (defn number? [expr]
   "is this expression a number?"

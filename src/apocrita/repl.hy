@@ -22,7 +22,8 @@
 
 (import [apocrita.evaluator [eval-]]
         [apocrita.reader [read-]]
-        [apocrita.core [std-env]])
+        [apocrita.core [std-env]]
+        [apocrita.types [ApocritaException]])
 
 (defn input-expression []
   "get complete expression"
@@ -46,6 +47,8 @@
          (print))
      (except [e SystemExit]
        (setv running false))
+     (except [e ApocritaException]
+       (print e))
      (except [e Exception]
        (print "error:" e)))))
 
