@@ -68,7 +68,9 @@
                (setv self.env env)
                nil)]
    [--str-- (fn [self]
-              "<closure>")]
+              (+ "<closure: "
+                 (.join " " (map str (. self params)))
+                 ">"))]
    [--repr-- (fn [self]
                "<closure>")]])
 
