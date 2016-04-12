@@ -97,6 +97,23 @@ Functions are defined with lambda keyword or with shortform:
 24
 ```
 
+Sometimes sequential execution is useful:
+
+```
+=> (define (example a b)
+...  (do (define (max a b)
+...        (cond ((> a b) a)
+...              ((> b a) b)
+...              (#t a)))
+...      (define bigger (max a b))
+...      (* 2 bigger)))
+<closure: a b>
+=> (example 1 2)
+4
+=> (example 2 1)
+4
+```
+
 When done, just exit the repl:
 
 ```

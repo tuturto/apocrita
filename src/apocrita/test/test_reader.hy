@@ -105,6 +105,16 @@
   (assert (= (read-eval "(foo 1 2)" env)
              3)))
 
+(defn test-do-block []
+  "do block can be used to perform sequential actions"
+  (setv env (std-env))
+  (read-eval "(define (foo)
+                (do (define a 5)
+                    (define b 6)
+                    (+ a b)))" env)
+  (assert (= (read-eval "(foo)" env)
+             11)))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")

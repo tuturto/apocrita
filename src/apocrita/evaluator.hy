@@ -132,7 +132,21 @@
 
 (defn eval-lambda [expr env]
   "evaluate lambda"
-  (Closure (get expr.expr 1) (get expr.expr 2) env))
+  (Closure (get expr.expr 1) 
+           (get expr.expr 2) env))
+
+(defn do? [expr]
+  "is this expression a do"
+  (and (expression? expr)
+       (symbol? (first expr))
+       (= (. (first expr) expr) "do")))
+
+(defn eval-do [expr env]
+  "evaluate do block"
+  (setv res nil)
+  (for [item (rest expr)]
+    (setv res (eval- item env)))
+  res)
 
 (defn eval- [expr env]
   "evaluate an expression in environment"
@@ -141,6 +155,7 @@
         [(cond? expr) (eval-cond expr env)]
         [(define? expr) (eval-define expr env)]
         [(lambda? expr) (eval-lambda expr env)]
+        [(do? expr) (eval-do expr env)]
         [(symbol? expr) (lookup expr env)]
         [(primitive? expr) expr]        
         [true (apply- (eval- (first expr) env)
