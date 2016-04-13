@@ -22,7 +22,8 @@
 
 (import [apocrita.types [Symbol Expression Closure PrimitiveOperation
                          number? symbol? expression? primitive? boolean?
-                         UnboundSymbol TooManyParameters NoMatchInCond]]
+                         UnboundSymbol TooManyParameters NoMatchInCond
+                         TooFewParameters]]
         [apocrita.core [op-add op-subtract op-smaller op-greater op-equal
                         op-exit op-multiply]])
 
@@ -39,16 +40,32 @@
 (defn bind [params args env]
   "bind arguments to list of formal parameters"
   (when (> (len params.expr) (len args))
-    (assert false))
+    (raise (TooFewParameters params args)))
   (when (< (len params.expr) (len args))
     (raise (TooManyParameters params args)))
   (setv combined (dict-comp (. (first pair) expr) (second pair)
                             [pair (zip params args)]))  
   (, combined env))
 
+(defn needs-currying? [proc args]
+  "does this application result to currying"
+  (> (len (. proc params expr)) (len args)))
+
+(defn curry [proc args]
+  "curry a function"
+  (let [[all-params (. proc params expr)]
+        [arg-count (len args)]
+        [unbound-params (slice all-params arg-count)]
+        [bound-params (slice all-params 0 arg-count)]]
+    (eval- (Expression [(Symbol "lambda")
+                        (Expression unbound-params)
+                        proc.body])
+           (bind (Expression bound-params) args (. proc env)))))
+
 (defn apply- [proc args]
   "apply procedure to arguments"
   (cond [(primitive? proc) (apply-primop proc args)]
+        [(needs-currying? proc args) (curry proc args)]
         [true (eval- (. proc body)
                      (bind (. proc params) args (. proc env)))]))
 

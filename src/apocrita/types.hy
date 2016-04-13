@@ -121,6 +121,24 @@
                           (.join " " (map str (. self params)))
                           ")")))]])
 
+(defclass TooFewParameters [ApocritaException]
+  "error raised when too few parameters was specified"
+  [[--init-- (fn [self param-list params]
+               (-> (super)
+                   (.--init-- nil "too few parameters"))
+               (setv self.params params)
+               (setv self.param-list param-list)
+               nil)]
+   [--str-- (fn [self]
+              (.format "{0}: expected {1} '{2}', got {3} '{4}'"
+                       self.message
+                       (len self.param-list.expr)
+                       self.param-list
+                       (len self.params)
+                       (+ "("
+                          (.join " " (map str (. self params)))
+                          ")")))]])
+
 (defclass NoMatchInCond [ApocritaException]
   "error raised when cond doesn't execute"
   [[--init-- (fn [self expr]

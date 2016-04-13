@@ -115,6 +115,15 @@
   (assert (= (read-eval "(foo)" env)
              11)))
 
+(defn test-currying []
+  "calling function with too few arguments results a new function"
+  (setv env (std-env))
+  (read-eval "(define (add a b)
+               (+ a b))" env)
+  (read-eval "(define add-1 (add 1))" env)
+  (assert (= (read-eval "(add-1 5)" env)
+             6)))
+
 (defn test-group-single-character []
   "even single character should be grouped correctly"
   (assert (= (group-elements "5")

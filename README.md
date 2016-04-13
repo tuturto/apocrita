@@ -97,6 +97,18 @@ Functions are defined with lambda keyword or with shortform:
 24
 ```
 
+Functions are auto-curried:
+
+```
+=> (define (add a b)
+...  (+ a b)
+<closure: a b>
+=> (define add-1 (add 1))
+<closure: b>
+=> (add-1 5)
+6
+```
+
 Sometimes sequential execution is useful:
 
 ```
