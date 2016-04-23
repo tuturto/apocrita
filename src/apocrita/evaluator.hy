@@ -25,13 +25,14 @@
                          UnboundSymbol TooManyParameters NoMatchInCond
                          TooFewParameters]]
         [apocrita.core [op-add op-subtract op-smaller op-greater op-equal
-                        op-exit op-multiply]])
+                        op-exit op-multiply op-divide]])
 
 (defn apply-primop [proc args]
   "apply a primitive operation"
   (cond [(= proc.expr "+") (op-add args)]
         [(= proc.expr "-") (op-subtract args)]
         [(= proc.expr "*") (op-multiply args)]
+        [(= proc.expr "/") (op-divide args)]
         [(= proc.expr "<") (op-smaller args)]
         [(= proc.expr ">") (op-greater args)]
         [(= proc.expr "=") (op-equal args)]

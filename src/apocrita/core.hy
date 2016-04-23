@@ -39,6 +39,10 @@
   "multiply operands"
   (reduce * coll))
 
+(defn op-divide [coll]
+  "divide operands"
+  (reduce / coll))
+
 (defn op-smaller [coll]
   "test if every operand is smaller than the one before it"
   (setv res true)
