@@ -29,14 +29,14 @@
 
 (defn apply-primop [proc args]
   "apply a primitive operation"
-  (cond [(= proc.expr "+") (op-add args)]
-        [(= proc.expr "-") (op-subtract args)]
-        [(= proc.expr "*") (op-multiply args)]
-        [(= proc.expr "/") (op-divide args)]
-        [(= proc.expr "<") (op-smaller args)]
-        [(= proc.expr ">") (op-greater args)]
-        [(= proc.expr "=") (op-equal args)]
-        [(= proc.expr "exit") (op-exit (first args))]))
+  (if (= proc.expr "+") (op-add args)
+      (= proc.expr "-") (op-subtract args)
+      (= proc.expr "*") (op-multiply args)
+      (= proc.expr "/") (op-divide args)
+      (= proc.expr "<") (op-smaller args)
+      (= proc.expr ">") (op-greater args)
+      (= proc.expr "=") (op-equal args)
+      (= proc.expr "exit") (op-exit (first args))))
 
 (defn bind [params args env]
   "bind arguments to list of formal parameters"
@@ -54,10 +54,10 @@
 
 (defn curry [proc args]
   "curry a function"
-  (let [[all-params (. proc params expr)]
-        [arg-count (len args)]
-        [unbound-params (slice all-params arg-count)]
-        [bound-params (slice all-params 0 arg-count)]]
+  (let [all-params (. proc params expr)
+        arg-count (len args)
+        unbound-params (cut all-params arg-count)
+        bound-params (cut all-params 0 arg-count)]
     (eval- (Expression [(Symbol "lambda")
                         (Expression unbound-params)
                         proc.body])
@@ -67,7 +67,7 @@
   "apply procedure to arguments"
   (cond [(primitive? proc) (apply-primop proc args)]
         [(needs-currying? proc args) (curry proc args)]
-        [true (eval- (. proc body)
+        [True (eval- (. proc body)
                      (bind (. proc params) args (. proc env)))]))
 
 (defn evlist [exprs env]
@@ -82,11 +82,11 @@
 
 (defn eval-cond [expr env]
   "evaluate a cond form"
-  (setv match-found false)
-  (setv res nil)
+  (setv match-found False)
+  (setv res None)
   (for [branch (rest expr)]
     (when (= (str (eval- (first branch) env)) "#t")
-      (setv match-found true)
+      (setv match-found True)
       (setv res (eval- (second branch) env))
       (break)))
   (when (not match-found)
@@ -105,19 +105,19 @@
 
 (defn lookup [symbol env]
   "get value of symbol in nested environment"
-  (setv found false)
-  (setv res nil)
+  (setv found False)
+  (setv res None)
   (setv current-env env)
   (setv current-frame (first current-env)) 
-  (while (not (is current-frame nil))
+  (while (not (is current-frame None))
     (when (in symbol.expr current-frame)
-      (setv found true)
+      (setv found True)
       (setv res (get current-frame symbol.expr))
       (break))
     (setv current-env (second current-env))
     (if current-env
       (setv current-frame (first current-env))
-      (setv current-frame nil)))
+      (setv current-frame None)))
   (if found
     res
     (raise (UnboundSymbol symbol.expr))))
@@ -130,10 +130,10 @@
                                env)
              (lookup (get expr.expr 1) env))]
         [(expression? (second expr))
-         (let [[header (second expr)]
-               [fn-name (first header)]
-               [param-list (list (rest header))]
-               [body (get expr.expr 2)]]
+         (let [header (second expr)
+               fn-name (first header)
+               param-list (list (rest header))
+               body (get expr.expr 2)]
            (set-symbol-value fn-name
                              (eval- (Expression [(Symbol "lambda")
                                                  (Expression param-list)
@@ -161,7 +161,7 @@
 
 (defn eval-do [expr env]
   "evaluate do block"
-  (setv res nil)
+  (setv res None)
   (for [item (rest expr)]
     (setv res (eval- item env)))
   res)
@@ -176,5 +176,5 @@
         [(do? expr) (eval-do expr env)]
         [(symbol? expr) (lookup expr env)]
         [(primitive? expr) expr]        
-        [true (apply- (eval- (first expr) env)
+        [True (apply- (eval- (first expr) env)
                       (evlist (rest expr) env))]))

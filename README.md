@@ -3,7 +3,7 @@ Apocrita is a lisp interpreter written in Hy
 System Requirements
 ===================
 - Python 3.4
-- hy 0.11.0
+- hy 0.12.0
 
 Usage
 =====

@@ -45,33 +45,33 @@
 
 (defn op-smaller [coll]
   "test if every operand is smaller than the one before it"
-  (setv res true)
+  (setv res True)
   (setv previous (first coll))
   (for [current (rest coll)]
     (when (not (< previous current))
-        (setv res false)
+        (setv res False)
         (break))
     (setv previous current))
   (Boolean res))
 
 (defn op-greater [coll]
   "test is every operand is larger that the one before it"
-  (setv res true)
+  (setv res True)
   (setv previous (first coll))
   (for [current (rest coll)]
     (when (not (> previous current))
-        (setv res false)
+        (setv res False)
         (break))
     (setv previous current))
   (Boolean res))
 
 (defn op-equal [coll]
   "test is every operand is equal to the one before it"
-  (setv res true)
+  (setv res True)
   (setv previous (first coll))
   (for [current (rest coll)]
     (when (not (= previous current))
-        (setv res false)
+        (setv res False)
         (break))
     (setv previous current))
   (Boolean res))

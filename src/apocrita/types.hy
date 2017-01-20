@@ -22,133 +22,124 @@
 
 (defclass Symbol []
   "Symbol"
-  [[--init-- (fn [self expr]
-               (setv self.expr expr)
-               nil)]
-   [--str-- (fn [self]
-              (str (. self expr)))]
-   [--repr-- (fn [self]
-               (str (. self expr)))]])
+  (defn --init-- [self expr]
+    (setv self.expr expr))
+  (defn --str-- [self]
+    (str (. self expr)))
+  (defn --repr-- [self]
+    (str (. self expr))))
 
 (defclass Boolean []
   "Boolean value"  
-  [[--init-- (fn [self value]
-               (setv self.value value)
-               nil)]
-   [--str-- (fn [self]
+  [--init-- (fn [self value]
+              (setv self.value value))
+   --str-- (fn [self]
              (if (. self value)
                "#t"
-               "#f"))]
-   [--repr-- (fn [self]
-               (str (. self value)))]])
+               "#f"))
+   --repr-- (fn [self]
+              (str (. self value)))])
 
 (defclass Expression []
   "expression"
-  [[--init-- (fn [self &optional [expr nil]]
-               (if expr
-                 (setv self.expr expr)
-                 (setv self.expr []))
-               nil)]
-   [append (fn [self expr]
-             (.append (. self expr) expr))]
-   [--str-- (fn [self]
-              (+ "("
-                 (.join " " (map str (. self expr)))
-                 ")"))]
-   [--repr-- (fn [self]
-               (str self))]
-   [--iter-- (fn [self]
-               (.--iter-- self.expr))]])
+  [--init-- (fn [self &optional [expr None]]
+              (if expr
+                (setv self.expr expr)
+                (setv self.expr [])))
+   append (fn [self expr]
+            (.append (. self expr) expr))
+   --str-- (fn [self]
+             (+ "("
+                (.join " " (map str (. self expr)))
+                ")"))
+   --repr-- (fn [self]
+              (str self))
+   --iter-- (fn [self]
+              (.--iter-- self.expr))])
 
 (defclass Closure []
   "closure is function and environment"
-  [[--init-- (fn [self params body env]
-               (setv self.params params)
-               (setv self.body body)
-               (setv self.env env)
-               nil)]
-   [--str-- (fn [self]
-              (+ "<closure: "
-                 (.join " " (map str (. self params)))
-                 ">"))]
-   [--repr-- (fn [self]
-               "<closure>")]])
+  [--init-- (fn [self params body env]
+              (setv self.params params)
+              (setv self.body body)
+              (setv self.env env))
+   --str-- (fn [self]
+             (+ "<closure: "
+                (.join " " (map str (. self params)))
+                ">"))
+   --repr-- (fn [self]
+              "<closure>")])
 
 (defclass PrimitiveOperation []
   "primitive operation"
-  [[--init-- (fn [self expr]
-               (setv self.expr expr)
-               nil)]
-   [--str-- (fn [self]
-              (str (. self expr)))]
-   [--repr-- (fn [self]
-               (str (. self expr)))]])
+  [--init-- (fn [self expr]
+              (setv self.expr expr))
+   --str-- (fn [self]
+             (str (. self expr)))
+   --repr-- (fn [self]
+              (str (. self expr)))])
 
 (defclass ApocritaException [Exception]
   "base class for all exceptions"
-  [[--init-- (fn [self expr message]
-               (-> (super)
-                   (.--init--))
-               (setv self.message message)
-               (setv self.expr expr)
-               nil)]])
+  [--init-- (fn [self expr message]
+              (-> (super)
+                  (.--init--))
+              (setv self.message message)
+              (setv self.expr expr))])
 
 (defclass UnboundSymbol [ApocritaException]
   "error raised when trying to access value of unbound symbol"
-  [[--init-- (fn [self expr]
-               (-> (super)
-                   (.--init-- expr "unbound symbol")))]
-   [--str-- (fn [self]
-              (.format "{0}: {1}"
-                       self.message
-                       self.expr))]])
+  [--init-- (fn [self expr]
+              (-> (super)
+                  (.--init-- expr "unbound symbol")))
+   --str-- (fn [self]
+             (.format "{0}: {1}"
+                      self.message
+                      self.expr))])
 
 (defclass TooManyParameters [ApocritaException]
   "error raised when too many parameters was specified"
-  [[--init-- (fn [self param-list params]
-               (-> (super)
-                   (.--init-- nil "too many parameters"))
-               (setv self.params params)
-               (setv self.param-list param-list)
-               nil)]
-   [--str-- (fn [self]
-              (.format "{0}: expected {1} '{2}', got {3} '{4}'"
-                       self.message
-                       (len self.param-list.expr)
-                       self.param-list
-                       (len self.params)
-                       (+ "("
-                          (.join " " (map str (. self params)))
-                          ")")))]])
+  [--init-- (fn [self param-list params]
+              (-> (super)
+                  (.--init-- nil "too many parameters"))
+              (setv self.params params)
+              (setv self.param-list param-list))
+   --str-- (fn [self]
+             (.format "{0}: expected {1} '{2}', got {3} '{4}'"
+                      self.message
+                      (len self.param-list.expr)
+                      self.param-list
+                      (len self.params)
+                      (+ "("
+                         (.join " " (map str (. self params)))
+                         ")")))])
 
 (defclass TooFewParameters [ApocritaException]
   "error raised when too few parameters was specified"
-  [[--init-- (fn [self param-list params]
-               (-> (super)
-                   (.--init-- nil "too few parameters"))
-               (setv self.params params)
-               (setv self.param-list param-list)
-               nil)]
-   [--str-- (fn [self]
-              (.format "{0}: expected {1} '{2}', got {3} '{4}'"
-                       self.message
-                       (len self.param-list.expr)
-                       self.param-list
-                       (len self.params)
-                       (+ "("
-                          (.join " " (map str (. self params)))
-                          ")")))]])
+  [--init-- (fn [self param-list params]
+              (-> (super)
+                  (.--init-- nil "too few parameters"))
+              (setv self.params params)
+              (setv self.param-list param-list))
+   --str-- (fn [self]
+             (.format "{0}: expected {1} '{2}', got {3} '{4}'"
+                      self.message
+                      (len self.param-list.expr)
+                      self.param-list
+                      (len self.params)
+                      (+ "("
+                         (.join " " (map str (. self params)))
+                         ")")))])
 
 (defclass NoMatchInCond [ApocritaException]
   "error raised when cond doesn't execute"
-  [[--init-- (fn [self expr]
-               (-> (super)
-                   (.--init-- expr "no match in cond"))
-               nil)]
-   [--str-- (fn [self]
-              (.format "{0}: {1}"
-                       self.message
-                       self.expr))]])
+  [--init-- (fn [self expr]
+              (-> (super)
+                  (.--init-- expr "no match in cond")))
+   --str-- (fn [self]
+             (.format "{0}: {1}"
+                      self.message
+                      self.expr))])
 
 (defn number? [expr]
   "is this expression a number?"

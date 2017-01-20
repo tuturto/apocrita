@@ -20,8 +20,6 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(require hy.contrib.anaphoric)
-
 (import [apocrita.types [Symbol Expression PrimitiveOperation Boolean]])
 
 (defn read- [stream]
@@ -35,20 +33,20 @@
     (setv res expr)
     (try
      (setv res (int expr))
-     (catch [e ValueError]
+     (except [e ValueError]
        (try
         (setv res (float expr))
-        (catch [e ValueError] 
+        (except [e ValueError] 
           (cond [(in expr ["-" "+" "*" "/" "<" ">" "=" "exit"])
                  (setv res (PrimitiveOperation expr))]
-                [(= "#t" expr) (setv res (Boolean true))]
-                [(= "#f" expr) (setv res (Boolean false))]
-                [true (setv res (Symbol expr))])))))
+                [(= "#t" expr) (setv res (Boolean True))]
+                [(= "#f" expr) (setv res (Boolean False))]
+                [True (setv res (Symbol expr))])))))
     res)
 
-  (let [[current-expression nil]
-        [expression-stack []]
-        [res nil]]
+  (let [current-expression None
+        expression-stack []
+        res None]
     (for [elem stream]
          (cond [(and (not current-expression)
                      (= "(" elem))

@@ -34,20 +34,20 @@
 
 (defn test-smaller-true []
   "testing (< 1 2 3) results true"
-  (let [[res (op-smaller [1 2 3])]]
-    (assert (= res.value true))))
+  (let [res (op-smaller [1 2 3])]
+    (assert (= res.value True))))
 
 (defn test-smaller-false []
   "testing (< 3 2 1) results false"
-  (let [[res (op-smaller [3 2 1])]]
-    (assert (= res.value false))))
+  (let [res (op-smaller [3 2 1])]
+    (assert (= res.value False))))
 
 (defn test-greater-true []
   "testing (> 3 2 1) results true"
-  (let [[res (op-greater [3 2 1])]]
-    (assert (= res.value true))))
+  (let [res (op-greater [3 2 1])]
+    (assert (= res.value True))))
 
 (defn test-greater-false []
   "testing (> 1 2 3) results false"
-  (let [[res (op-greater [1 2 3])]]
-    (assert (= res.value false))))
+  (let [res (op-greater [1 2 3])]
+    (assert (= res.value False))))
